@@ -1,0 +1,32 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "k-HujFDf0gyDxI4TOR4Td"
+uri = "file://artifacts/world-tfh/src/assets/hero-orb.png"
+type = "image"
+title = "Hero orb visual"
+
+[[generated]]
+id = "w_b12yPZdq7Us3YbUXhiW"
+uri = "file://artifacts/world-tfh/src/assets/orb.png"
+type = "image"
+title = "Sleek biometric orb"
+
+[[generated]]
+id = "kMqtnIAyjRqxguLMAYLBq"
+uri = "file://artifacts/world-tfh/src/assets/avatar-1.png"
+type = "image"
+title = "Team member avatar 1"
+
+[[generated]]
+id = "Kj30rcOFsJ1WoKuH0E4ja"
+uri = "file://artifacts/world-tfh/src/assets/avatar-2.png"
+type = "image"
+title = "Team member avatar 2"
+
+[[generated]]
+id = "mlGdY_mlCy4IbDgkaqQlY"
+uri = "file://artifacts/world-tfh/src/assets/avatar-3.png"
+type = "image"
+title = "Team member avatar 3"

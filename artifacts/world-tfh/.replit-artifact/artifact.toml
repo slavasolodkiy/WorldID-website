@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "World / Tools for Humanity"
+version = "1.0.0"
+id = "artifacts/world-tfh"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23426
+
+[services.development]
+run = "pnpm --filter @workspace/world-tfh run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/world-tfh", "run", "build" ]
+publicDir = "artifacts/world-tfh/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23426"
+BASE_PATH = "/"

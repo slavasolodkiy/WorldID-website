@@ -1,22 +1,31 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: World / Tools for Humanity API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: stats
+    description: Global statistics
+  - name: ecosystem
+    description: Ecosystem apps and partners
+  - name: orb
+    description: Orb hardware info
+  - name: newsletter
+    description: Newsletter signups
+  - name: team
+    description: Team members
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +33,97 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get global World stats
+      responses:
+        "200":
+          description: Global stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlobalStats"
+
+  /ecosystem:
+    get:
+      operationId: listEcosystemApps
+      tags: [ecosystem]
+      summary: List ecosystem apps and partners
+      responses:
+        "200":
+          description: List of ecosystem apps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EcosystemApp"
+
+  /orb:
+    get:
+      operationId: getOrbInfo
+      tags: [orb]
+      summary: Get Orb hardware information
+      responses:
+        "200":
+          description: Orb hardware info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrbInfo"
+
+  /team:
+    get:
+      operationId: listTeamMembers
+      tags: [team]
+      summary: List team members
+      responses:
+        "200":
+          description: List of team members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamMember"
+
+  /newsletter:
+    post:
+      operationId: subscribeNewsletter
+      tags: [newsletter]
+      summary: Subscribe to newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsletterSubscribeBody"
+      responses:
+        "200":
+          description: Subscribed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsletterSubscribeResponse"
+
+  /locations:
+    get:
+      operationId: listOrbLocations
+      tags: [orb]
+      summary: List Orb deployment locations worldwide
+      responses:
+        "200":
+          description: List of orb locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrbLocation"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +131,129 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    GlobalStats:
+      type: object
+      properties:
+        verifiedHumans:
+          type: integer
+          description: Total number of verified humans
+        countriesActive:
+          type: integer
+          description: Number of countries with active Orbs
+        ecosystemApps:
+          type: integer
+          description: Number of apps in the ecosystem
+        orbsDeployed:
+          type: integer
+          description: Total Orbs deployed worldwide
+        dailyVerifications:
+          type: integer
+          description: Daily new verifications
+      required: [verifiedHumans, countriesActive, ecosystemApps, orbsDeployed, dailyVerifications]
+
+    EcosystemApp:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [defi, social, gaming, tools, payments, identity]
+        logoUrl:
+          type: string
+        websiteUrl:
+          type: string
+        worldIdEnabled:
+          type: boolean
+        featured:
+          type: boolean
+      required: [id, name, description, category, worldIdEnabled, featured]
+
+    OrbInfo:
+      type: object
+      properties:
+        version:
+          type: string
+        description:
+          type: string
+        specs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrbSpec"
+        features:
+          type: array
+          items:
+            type: string
+        privacyApproach:
+          type: string
+      required: [version, description, specs, features, privacyApproach]
+
+    OrbSpec:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+      required: [label, value]
+
+    OrbLocation:
+      type: object
+      properties:
+        id:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        countryCode:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        active:
+          type: boolean
+      required: [id, city, country, countryCode, lat, lng, active]
+
+    TeamMember:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        bio:
+          type: string
+        avatarUrl:
+          type: string
+        linkedinUrl:
+          type: string
+        twitterUrl:
+          type: string
+      required: [id, name, role, bio]
+
+    NewsletterSubscribeBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required: [email]
+
+    NewsletterSubscribeResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success, message]
