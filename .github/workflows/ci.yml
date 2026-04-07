@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Typecheck, Test, Codegen Drift
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: worldtfh_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/worldtfh_test
+      ALLOWED_ORIGINS: http://localhost:5173
+      NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── Typecheck ────────────────────────────────────────────────────────────
+      - name: Typecheck (libs)
+        run: pnpm run typecheck:libs
+
+      - name: Typecheck (all artifacts)
+        run: pnpm run typecheck
+
+      # ── OpenAPI / Codegen drift check ────────────────────────────────────────
+      - name: Run codegen
+        run: pnpm --filter @workspace/api-spec run codegen
+
+      - name: Check for codegen drift
+        run: |
+          if ! git diff --quiet lib/api-client-react lib/api-zod; then
+            echo "ERROR: Generated client is out of sync with OpenAPI spec."
+            echo "Run 'pnpm --filter @workspace/api-spec run codegen' and commit the result."
+            git diff lib/api-client-react lib/api-zod
+            exit 1
+          fi
+
+      # ── DB Migrations ────────────────────────────────────────────────────────
+      - name: Push DB schema (test DB)
+        run: pnpm --filter @workspace/db run push
+
+      - name: Seed test DB
+        run: pnpm --filter @workspace/db run seed
+
+      # ── API Integration Tests ────────────────────────────────────────────────
+      - name: API integration tests
+        run: pnpm --filter @workspace/api-server run test
+
+      # ── Frontend Smoke Tests ─────────────────────────────────────────────────
+      - name: Frontend smoke tests
+        run: pnpm --filter @workspace/world-tfh run test

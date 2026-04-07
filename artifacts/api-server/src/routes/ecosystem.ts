@@ -1,16 +1,17 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
-import { ecosystemAppsTable } from "@workspace/db";
+import { listEcosystemApps } from "../services/ecosystem.service.js";
+import { toErrorResponse } from "../lib/errors.js";
 
 const router = Router();
 
 router.get("/ecosystem", async (req, res) => {
   try {
-    const apps = await db.select().from(ecosystemAppsTable);
-    return res.json(apps);
+    const data = await listEcosystemApps();
+    res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch ecosystem apps");
-    return res.status(500).json({ error: "Internal server error" });
+    const { status, ...body } = toErrorResponse(err);
+    res.status(status).json(body);
   }
 });
 

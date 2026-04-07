@@ -1,9 +1,10 @@
 import { useGetOrbInfo, getGetOrbInfoQueryKey, useListOrbLocations, getListOrbLocationsQueryKey } from "@workspace/api-client-react";
 import orbImg from "@/assets/orb.png";
+import { ApiState } from "@/components/ui/ApiState";
 
 export function OrbPage() {
-  const { data: orb } = useGetOrbInfo({ query: { queryKey: getGetOrbInfoQueryKey() } });
-  const { data: locations } = useListOrbLocations({ query: { queryKey: getListOrbLocationsQueryKey() } });
+  const { data: orb, isLoading: orbLoading, isError: orbError, refetch: refetchOrb } = useGetOrbInfo({ query: { queryKey: getGetOrbInfoQueryKey() } });
+  const { data: locations, isLoading: locLoading, isError: locError, refetch: refetchLoc } = useListOrbLocations({ query: { queryKey: getListOrbLocationsQueryKey() } });
 
   return (
     <div className="w-full flex flex-col min-h-screen pt-24">
@@ -23,59 +24,61 @@ export function OrbPage() {
         </div>
       </section>
 
-      {orb && (
-        <section className="px-6 py-24 bg-card/50 border-t border-border/50">
-          <div className="max-w-6xl mx-auto w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-              <div>
-                <h2 className="text-3xl font-bold mb-8">Technical Specs</h2>
-                <div className="space-y-4">
-                  {orb.specs.map((spec, i) => (
-                    <div key={i} className="flex justify-between border-b border-border/50 pb-4">
-                      <span className="text-muted-foreground">{spec.label}</span>
-                      <span className="font-medium text-right">{spec.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold mb-8">Privacy First</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {orb.privacyApproach}
-                </p>
-                <div className="mt-8 space-y-4">
-                  {orb.features.map((feature, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {locations && locations.length > 0 && (
-        <section className="px-6 py-24">
-          <div className="max-w-6xl mx-auto w-full">
-            <h2 className="text-3xl font-bold mb-12 text-center">Global Deployment</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {locations.map((loc) => (
-                <div key={loc.id} className="p-6 rounded-2xl border border-border/50 bg-card hover:bg-card/80 transition-colors">
-                  <h3 className="font-bold mb-1">{loc.city}</h3>
-                  <p className="text-sm text-muted-foreground">{loc.country}</p>
-                  <div className="mt-4 flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${loc.active ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                    <span className="text-xs uppercase tracking-wider">{loc.active ? 'Active' : 'Coming Soon'}</span>
+      <section className="px-6 py-24 bg-card/50 border-t border-border/50">
+        <div className="max-w-6xl mx-auto w-full">
+          <ApiState data={orb} isLoading={orbLoading} isError={orbError} onRetry={refetchOrb} loadingRows={4}>
+            {(o) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div>
+                  <h2 className="text-3xl font-bold mb-8">Technical Specs</h2>
+                  <div className="space-y-4">
+                    {o.specs.map((spec, i) => (
+                      <div key={i} className="flex justify-between border-b border-border/50 pb-4">
+                        <span className="text-muted-foreground">{spec.label}</span>
+                        <span className="font-medium text-right">{spec.value}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+                <div>
+                  <h2 className="text-3xl font-bold mb-8">Privacy First</h2>
+                  <p className="text-muted-foreground leading-relaxed">{o.privacyApproach}</p>
+                  <div className="mt-8 space-y-4">
+                    {o.features.map((feature, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </ApiState>
+        </div>
+      </section>
+
+      <section className="px-6 py-24">
+        <div className="max-w-6xl mx-auto w-full">
+          <h2 className="text-3xl font-bold mb-12 text-center">Global Deployment</h2>
+          <ApiState data={locations} isLoading={locLoading} isError={locError} onRetry={refetchLoc} loadingRows={8}>
+            {(locs) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {locs.map((loc) => (
+                  <div key={loc.id} className="p-6 rounded-2xl border border-border/50 bg-card hover:bg-card/80 transition-colors">
+                    <h3 className="font-bold mb-1">{loc.city}</h3>
+                    <p className="text-sm text-muted-foreground">{loc.country}</p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${loc.active ? "bg-green-500" : "bg-yellow-500"}`} />
+                      <span className="text-xs uppercase tracking-wider">{loc.active ? "Active" : "Coming Soon"}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ApiState>
+        </div>
+      </section>
     </div>
   );
 }

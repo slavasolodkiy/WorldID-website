@@ -1,16 +1,17 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
-import { teamMembersTable } from "@workspace/db";
+import { listTeamMembers } from "../services/team.service.js";
+import { toErrorResponse } from "../lib/errors.js";
 
 const router = Router();
 
 router.get("/team", async (req, res) => {
   try {
-    const members = await db.select().from(teamMembersTable);
-    return res.json(members);
+    const data = await listTeamMembers();
+    res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch team members");
-    return res.status(500).json({ error: "Internal server error" });
+    const { status, ...body } = toErrorResponse(err);
+    res.status(status).json(body);
   }
 });
 

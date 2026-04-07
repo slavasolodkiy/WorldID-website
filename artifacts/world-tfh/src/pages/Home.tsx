@@ -2,10 +2,11 @@ import { useGetStats, getGetStatsQueryKey } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
 import { HeroOrb } from "@/components/ui/HeroOrb";
 import { StatCounter } from "@/components/ui/StatCounter";
+import { ApiState } from "@/components/ui/ApiState";
 import { Link } from "wouter";
 
 export function Home() {
-  const { data: stats } = useGetStats({ query: { queryKey: getGetStatsQueryKey() } });
+  const { data: stats, isLoading, isError, refetch } = useGetStats({ query: { queryKey: getGetStatsQueryKey() } });
 
   return (
     <div className="w-full flex flex-col min-h-screen pt-24 cosmic-gradient">
@@ -40,15 +41,17 @@ export function Home() {
         <HeroOrb />
       </section>
 
-      {stats && (
-        <section className="px-6 py-24 max-w-6xl mx-auto w-full">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <StatCounter value={stats.verifiedHumans} label="Verified Humans" />
-            <StatCounter value={stats.countriesActive} label="Countries" />
-            <StatCounter value={stats.ecosystemApps} label="Ecosystem Apps" />
-          </div>
-        </section>
-      )}
+      <section className="px-6 py-24 max-w-6xl mx-auto w-full">
+        <ApiState data={stats} isLoading={isLoading} isError={isError} onRetry={refetch} loadingRows={1}>
+          {(s) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StatCounter value={s.verifiedHumans} label="Verified Humans" />
+              <StatCounter value={s.countriesActive} label="Countries" />
+              <StatCounter value={s.ecosystemApps} label="Ecosystem Apps" />
+            </div>
+          )}
+        </ApiState>
+      </section>
     </div>
   );
 }

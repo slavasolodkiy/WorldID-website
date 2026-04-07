@@ -1,0 +1,57 @@
+You are working only inside the WorldID-website repository.
+
+If /reports/final-audit.md exists, read it first and use it as context. If it does not exist, infer from the codebase directly.
+
+Start with a plan, then implement in small checkpoints.
+
+Objective:
+Upgrade this repository from a visually convincing website replica into a reusable, production-leaning web product foundation, without redesigning the visible UI.
+
+Main goals:
+1. Improve reuse and maintainability.
+2. Remove hardcoded/demo assumptions from core behavior.
+3. Strengthen structure, documentation, config hygiene, and API/UI integration quality.
+4. Make the repo handoff-friendly for future engineers.
+
+Tasks:
+1. Create or improve these files:
+   - README.md
+   - AGENTS.md (only if missing)
+   - docs/architecture.md
+   - docs/product-scope.md
+   - docs/content-model.md
+   - .env.example
+2. Audit and refactor configuration:
+   - move secrets and environment-specific values out of source code
+   - centralize config/constants
+   - document required environment variables
+3. Review the page/content architecture:
+   - identify reusable sections/components
+   - reduce duplication
+   - separate content from presentation where practical
+4. Strengthen API/UI integration:
+   - standardize loading, empty, error, and retry states
+   - standardize error handling shape on the frontend
+   - document any backend assumptions and missing API contracts
+5. Improve production readiness:
+   - add or improve basic tests
+   - add a CI workflow for typecheck/build/tests
+   - document what is still mocked, missing, or placeholder-based
+6. Produce a final report:
+   - docs/reuse-readiness-report.md
+   - include before/after summary
+   - list critical blockers still remaining
+   - give the next best prompt for a future iteration
+
+Constraints:
+- Do not redesign the visible layout unless absolutely necessary.
+- Preserve route structure where possible.
+- Do not introduce heavy dependencies without justification.
+- Do not use trademarked branding/assets in newly generated content unless already explicitly approved.
+- Prefer minimal, high-leverage refactors.
+- Be explicit about what is real, partial, mocked, or missing.
+
+Output requirements:
+- First show the implementation plan.
+- Then implement.
+- End with a concise changelog and a readiness delta.
