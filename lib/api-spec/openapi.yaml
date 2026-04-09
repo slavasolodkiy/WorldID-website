@@ -1,24 +1,32 @@
 openapi: 3.1.0
 info:
-  title: Api
+  title: World / TFH Marketing & Content API
   version: 0.1.0
-  description: World / Tools for Humanity API
+  description: |
+    Marketing and content API for the World / Tools for Humanity website.
+
+    **Scope:** This API serves marketing content, funnel conversion surfaces, and
+    acquisition flows only. It is NOT the core World ID identity or wallet API.
+    Identity verification, credential issuance, and protocol logic are owned by the
+    Apple and Android product repositories.
+
+    **Intended consumers:** The world-tfh React frontend only. Not a public developer API.
 servers:
   - url: /api
-    description: Base API path
+    description: Base API path (marketing content)
 tags:
   - name: health
-    description: Health operations
+    description: Health check (infrastructure)
   - name: stats
-    description: Global statistics
+    description: Display-only global network statistics for marketing pages
   - name: ecosystem
-    description: Ecosystem apps and partners
+    description: Curated ecosystem app directory (editorial content)
   - name: orb
-    description: Orb hardware info
+    description: Orb hardware marketing content and global location map
   - name: newsletter
-    description: Newsletter signups
+    description: Email acquisition / newsletter signup funnel
   - name: team
-    description: Team members
+    description: Leadership team bios (editorial content)
 
 paths:
   /healthz:

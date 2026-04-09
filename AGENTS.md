@@ -1,173 +1,122 @@
-# AGENTS.md
+# AGENTS.md — Guidelines for AI Agents
 
-## Mission
-This repository is a web replication project inspired by the World ID / Worldcoin website direction.
+## Repo Role
 
-Your role is to evaluate, improve, and extend this codebase as a serious reusable web product foundation, not as a superficial visual clone.
+This repository is the **marketing and acquisition funnel website** for World and Tools for Humanity.
+
+**Primary responsibilities:**
+1. Attract Orb operators and agents (hardware deployment funnel)
+2. Convert end users toward the World App on iOS/Android
+3. Present the ecosystem of apps using World ID
+4. Serve as a potential developer-facing entry point (routing to external docs)
+
+**This is NOT:**
+- A wallet backend
+- An identity verification backend
+- A World ID protocol implementation
+- A developer API portal (the core product APIs live in the Apple/Android product repos)
+
+**Source-of-truth rule:** The Apple/Android product repositories own the core identity and wallet backend. This website must not become a parallel identity backend. If you are tempted to add user auth, credential issuance, identity proofs, or verification flows to this repo — stop. Those belong in the product repos.
 
 ## Repository Overview
-Full-stack replica of world.org and toolsforhumanity.com. pnpm monorepo with a React + Vite frontend and Express API backend backed by PostgreSQL.
 
-```text
+pnpm monorepo. React + Vite frontend, Express 5 content API, PostgreSQL via Drizzle ORM.
+
+```
 artifacts/
-  api-server/       ← Express 5 backend (routes, services, middleware)
-  world-tfh/        ← React + Vite frontend
+  api-server/       ← Express 5 content/marketing API (routes, services, middleware)
+  world-tfh/        ← React + Vite marketing frontend
 lib/
   api-spec/         ← OpenAPI spec + Orval codegen config
   api-client-react/ ← Generated React Query hooks (DO NOT EDIT MANUALLY)
   api-zod/          ← Generated Zod schemas (DO NOT EDIT MANUALLY)
   db/               ← Drizzle ORM schema, migrations, seed script
-  
-## Priority goals
-Maximize architectural clarity
-Improve reuse and maintainability
-Distinguish real implementation from mock/demo behavior
-Identify missing flows and weak spots
-Keep recommendations concrete and evidence-based
+docs/
+  architecture.md       ← System design and request lifecycle
+  role-and-boundary.md  ← Detailed role definition and API boundary policy
+reports/
+  final-audit.md    ← Role audit, developer surface assessment, and decision memo
+```
 
-## What good looks like
+## Content/API Boundary Policy
 
-A strong result should move this repo toward:
+The website API surface is **limited to marketing and funnel content**:
 
-a reusable website codebase
-clean component structure
-production-friendly configuration
-explicit content and page architecture
-scalable frontend patterns
-safe secret handling
-realistic forms, validations, states, and integration boundaries
-## Critical implementation rules
-Never edit generated files in lib/api-client-react/ or lib/api-zod/. These are auto-generated from lib/api-spec/openapi.yaml. Always run codegen after changing the spec:
-pnpm --filter @workspace/api-spec run codegen
-OpenAPI is the contract. Any new API endpoint must be documented in lib/api-spec/openapi.yaml first, codegen run, then the route implemented.
-Route handlers must be thin. Business logic belongs in artifacts/api-server/src/services/. Route handlers validate input, call a service, and return the result.
-Use the standard error envelope. All API errors must go through toErrorResponse() from lib/errors.ts. The shape is:
-{ error: string, code: string }
-No hardcoded data in route handlers. All content should come from the database or documented seed data.
-Database changes: update schema first, then run the proper DB commands, and update seed data when needed.
-Frontend error states: every data-fetching page should use <ApiState> or an equivalent standardized pattern for loading, error, empty, and retry states.
-Import generated hooks from @workspace/api-client-react, not from ad hoc relative paths.
-## Audit rules
+| Allowed | Not Allowed |
+|---|---|
+| Global network stats (display-only) | Identity verification endpoints |
+| Ecosystem app directory | Wallet or credential issuance |
+| Orb hardware specs and locations | Authentication / session management |
+| Team member bios | Transaction signing |
+| Newsletter email capture | World ID proof generation/validation |
+| Health check | Any core protocol logic |
 
-When auditing this repository:
+If a proposed endpoint doesn't fit the "marketing content or funnel conversion" test, it belongs in a product repo, not here.
 
-inspect actual files, not assumptions
-reference exact files, folders, and functions/components
-separate findings into:
-implemented
-partially implemented
-missing
-mocked / hardcoded / placeholder-based
-unclear
-be skeptical and specific
-do not over-credit polished UI if logic is shallow
-## Web-specific review focus
+## Funnel Pathways
 
-Pay special attention to:
+Every page should have a clear conversion intent:
 
-overall information architecture
-page hierarchy and routing
-section-by-section completeness
-consistency of messaging and terminology
-component reusability
-responsive behavior
-loading / empty / error / success states
-forms and validation
-analytics/event instrumentation readiness
-SEO/metadata readiness
-accessibility basics
-asset and content organization
-## Reuse expectations
+- **End users** → World App download (App Store / Google Play)
+- **Orb operators** → Operator program signup / contact
+- **Developers** → `/developers` page → external protocol docs and GitHub
+- **Ecosystem builders** → Ecosystem listing form / World ID integration docs
 
-Prefer:
+## Critical Implementation Rules
 
-modular reusable UI components
-separation of content, presentation, and configuration
-centralized constants/config
-explicit env usage
-documented setup
-clean naming
-minimal duplication
+1. **Never edit generated files** in `lib/api-client-react/` or `lib/api-zod/`. Run codegen after changing the spec: `pnpm --filter @workspace/api-spec run codegen`.
 
-Avoid:
+2. **OpenAPI is the content API contract.** Any new endpoint must be documented in `lib/api-spec/openapi.yaml` first, pass the boundary policy above, then be implemented.
 
-one-off hacks
-hardcoded secrets
-hardcoded URLs when env/config is better
-tightly coupled page logic
-duplicated UI sections without abstraction
-fake completeness
-## Adding a New API Endpoint
-Add the path and schema to lib/api-spec/openapi.yaml
-Run pnpm --filter @workspace/api-spec run codegen
-Create artifacts/api-server/src/services/<feature>.service.ts
-Create or update artifacts/api-server/src/routes/<feature>.ts
-Register the router in the route index
-Use the generated hook in the frontend
+3. **Route handlers must be thin.** Business logic belongs in `artifacts/api-server/src/services/`. Route handlers validate input, call a service, and return the result.
+
+4. **Use the standard error envelope.** All API errors must go through `toErrorResponse()` from `lib/errors.ts`. Shape: `{ error: string, code: string }`.
+
+5. **No hardcoded data in route handlers.** All content comes from the database or documented seed data.
+
+6. **Frontend error states.** Every data-fetching page uses `<ApiState>` from `@/components/ui/ApiState` for loading / error+retry / empty states.
+
+7. **Import hooks from `@workspace/api-client-react`**, not from relative paths.
+
+## Adding a New Content API Endpoint
+
+1. Verify the endpoint is in scope (marketing content / funnel conversion)
+2. Add path + schema to `lib/api-spec/openapi.yaml`
+3. Run `pnpm --filter @workspace/api-spec run codegen`
+4. Create `artifacts/api-server/src/services/<feature>.service.ts`
+5. Create `artifacts/api-server/src/routes/<feature>.ts`
+6. Register the router in `artifacts/api-server/src/routes/index.ts`
+7. Use the generated hook in the frontend page
+
 ## Adding a New Page
-Create the page component
-Register the route
-Use the standard API state handling pattern for API-driven content
+
+1. Create `artifacts/world-tfh/src/pages/MyPage.tsx`
+2. Add the route in `artifacts/world-tfh/src/App.tsx`
+3. Include a clear funnel CTA (what should the user do next?)
+4. Use `<ApiState>` for any API-driven content
+
 ## Testing
-API tests: pnpm --filter @workspace/api-server run test
-Frontend tests: pnpm --filter @workspace/world-tfh run test
-Full typecheck: pnpm run typecheck
+
+```bash
+pnpm --filter @workspace/api-server run test   # API integration tests
+pnpm --filter @workspace/world-tfh run test    # Frontend smoke tests
+pnpm run typecheck                             # Full TypeScript check
+```
+
 ## Environment
 
-See .env.example for required environment variables. Secrets must never be committed.
+See `.env.example` for required environment variables. `DATABASE_URL` is mandatory. Never commit `.env` or any secrets.
 
-## Secrets and safety
+## What Is Seeded / Demo Data
 
-Never expose or preserve:
+- Stats (`global_stats` table) are seed data; not live-connected to on-chain data
+- Ecosystem app listings are editorial/seeded; not pulled from a live registry
+- Team member avatars are placeholder images
+- Newsletter subscribers are persisted to DB but no email delivery is wired
 
-database credentials
-API keys
-bearer tokens
-secret endpoints
-production secrets in source files
-plaintext passwords in code or docs
+## What Is Real
 
-If found:
-
-flag them clearly
-move them to environment variables
-update .env.example
-recommend secret rotation if exposed
-## What is mocked / placeholder
-Team member avatar images may use placeholder photos
-Stats may be seeded/demo data rather than live-updated
-Newsletter or similar flows may persist data without full external delivery integrations
-## What is real
-DB-backed content and API flows should be preferred over hardcoded route payloads
-Contract-validated endpoints are preferred where generated schemas/hooks are in use
-Persisted data flows should be documented clearly
-## Output format
-
-When asked to review or improve this repo, structure the output as:
-
-Executive summary
-Actual stack and architecture
-Replication depth assessment
-Implemented vs partial vs missing
-Mocked / hardcoded / risky areas
-Reuse blockers
-Production-readiness blockers
-Prioritized backlog:
-critical
-important
-nice-to-have
-Best next prompt for Replit
-## Editing rules
-
-Unless explicitly asked:
-
-do not make broad redesigns
-do not rewrite the whole project unnecessarily
-do not add heavy dependencies without justification
-
-When editing:
-
-prefer small high-value changes
-preserve working behavior
-explain tradeoffs
-keep diffs readable
+- All content is DB-backed (no hardcoded data in route handlers)
+- API endpoints are Zod-validated via generated schemas
+- Newsletter subscriber emails are persisted to PostgreSQL
+- Security: helmet, CORS allowlist, rate limiting, 64kb body size limit are all active

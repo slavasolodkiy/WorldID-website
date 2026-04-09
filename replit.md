@@ -2,7 +2,9 @@
 
 ## Overview
 
-Full-stack replica of the World (world.org) and Tools for Humanity (toolsforhumanity.com) websites. pnpm workspace monorepo using TypeScript. Production-hardened with security middleware, service layers, DB-backed content, standardized error envelopes, and a CI pipeline.
+**Marketing and acquisition funnel website** for World and Tools for Humanity. Its job is to attract Orb operators, convert end users toward the World App (iOS/Android), and surface the ecosystem and team. The backend API serves only marketing content and funnel conversion surfaces — it is not the World ID identity/wallet backend (those live in the Apple/Android product repositories).
+
+pnpm workspace monorepo using TypeScript. Production-hardened with security middleware, service layers, DB-backed content, standardized error envelopes, and a CI pipeline.
 
 ## Stack
 
@@ -33,6 +35,8 @@ Replica of world.org and toolsforhumanity.com. Pages:
 - `/team` — Team member cards
 
 All data-fetching pages use `<ApiState>` (`src/components/ui/ApiState.tsx`) for loading skeleton / error+retry / empty states.
+
+Pages include a `/developers` handoff page that orients developers and links them to external protocol docs and product repos (hybrid developer surface — see `reports/final-audit.md`).
 
 ### `api-server` (Express 5, preview: `/api`)
 Backend API with routes:
@@ -71,8 +75,10 @@ All errors use `AppError` → `toErrorResponse()` from `src/lib/errors.ts`.
 
 ## Docs
 - `README.md` — Quick start, commands, API reference, contributing guide
-- `AGENTS.md` — Rules for AI agents working in this repo
+- `AGENTS.md` — Rules for AI agents — includes source-of-truth rule and content/API boundary policy
 - `docs/architecture.md` — System design, request lifecycle, error handling, security, DB management
+- `docs/role-and-boundary.md` — Detailed repo role definition, API boundary policy, funnel architecture
+- `reports/final-audit.md` — Role audit, API boundary audit, developer surface decision memo, backlog
 - `.env.example` — All required + optional environment variables with descriptions
 
 ## CI

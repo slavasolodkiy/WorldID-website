@@ -1,5 +1,11 @@
 # Architecture
 
+## Repo Role
+
+This is a **marketing and acquisition funnel website**. The backend API serves only marketing content and funnel conversion surfaces. It is not the World ID protocol backend, wallet, or identity layer — those live in the Apple/Android product repositories.
+
+See `docs/role-and-boundary.md` for the full role definition and API boundary policy.
+
 ## Overview
 
 This is a pnpm monorepo containing a React+Vite frontend, an Express 5 API backend, shared libraries, and a PostgreSQL database managed by Drizzle ORM.

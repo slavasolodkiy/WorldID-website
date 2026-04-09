@@ -1,6 +1,10 @@
-# World / Tools for Humanity
+# World / Tools for Humanity — Marketing Website
 
-A full-stack replica of the [world.org](https://world.org) and [toolsforhumanity.com](https://toolsforhumanity.com) websites, built as a production-leaning reference application.
+This is the **marketing and acquisition funnel website** for World and Tools for Humanity. Its job is to attract Orb providers, convert end users into the World App (iOS/Android), and present the ecosystem and brand.
+
+**This is not the core wallet or identity backend.** The Apple and Android product repositories are the source of truth for identity verification, wallet logic, and the World ID protocol implementation. This website backend serves only marketing content, funnel analytics surfaces, and acquisition flows (newsletter, ecosystem directory, Orb location map).
+
+> **Handoffs:** Users are directed to [World App on the App Store](https://apps.apple.com/app/world-app/id1560859277) and [Google Play](https://play.google.com/store/apps/details?id=com.worldcoin) for the actual product experience.
 
 ## What's Inside
 
@@ -69,6 +73,7 @@ The frontend is served at `http://localhost:5173` and the API at `http://localho
 | `/tools-for-humanity` | TFH company page — mission, about |
 | `/orb` | Orb hardware — specs, privacy approach, global deployment map |
 | `/team` | Leadership team |
+| `/developers` | Developer handoff — links to protocol docs, GitHub, and product apps |
 
 ## API Endpoints
 

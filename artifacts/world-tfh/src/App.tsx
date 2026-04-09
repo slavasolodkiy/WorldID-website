@@ -13,6 +13,7 @@ import { OrbPage } from "./pages/OrbPage";
 import { WorldIdPage } from "./pages/WorldIdPage";
 import { EcosystemPage } from "./pages/EcosystemPage";
 import { TeamPage } from "./pages/TeamPage";
+import { DeveloperPage } from "./pages/DeveloperPage";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ function Router() {
           <Route path="/world-id" component={WorldIdPage} />
           <Route path="/ecosystem" component={EcosystemPage} />
           <Route path="/team" component={TeamPage} />
+          <Route path="/developers" component={DeveloperPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

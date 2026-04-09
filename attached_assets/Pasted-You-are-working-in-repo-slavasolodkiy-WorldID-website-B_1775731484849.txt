@@ -1,0 +1,82 @@
+You are working in repo: slavasolodkiy/WorldID-website
+Branch target: main
+Current baseline commit: 9cfc461
+
+Role of this repo in the ecosystem:
+This repo is the marketing/acquisition funnel layer, not the core wallet/identity backend.
+Primary jobs:
+1) attract Orb providers/agents
+2) attract end users into Apple/Android product flows
+3) potentially serve as developer-facing entry point (if explicitly decided)
+
+Source-of-truth rule:
+Apple is temporary source of truth for core product backend logic. Website must not become a parallel wallet/identity backend.
+
+Objective:
+Reposition and harden website architecture around marketing + funnel responsibilities, remove core-product confusion, and resolve the developer API/docs ownership question with an explicit recommendation and implementation-ready plan.
+
+Architectural direction:
+1) Separate content/marketing APIs from core app APIs by design and messaging.
+2) Keep website backend limited to content/funnel/supporting analytics surfaces.
+3) Produce a clear decision on developer-facing docs/API portal location and ownership.
+4) Create clean handoff links from website to app products and (if chosen) developer docs portal.
+
+Inspect first (in this order):
+1) README.md
+2) AGENTS.md
+3) reports/final-audit.md
+4) artifacts/api-server/src/app.ts
+5) artifacts/api-server/src/routes/index.ts and all route modules
+6) lib/api-spec/openapi.yaml
+7) lib/db/src/schema/*
+8) docs/* (including whether reuse-readiness-report exists or is missing)
+
+Concrete tasks:
+1) Clarify and enforce repo role:
+- update architecture/product docs so this repo is explicitly marketing/funnel
+- remove language and structures that imply this is core wallet/identity backend
+- define funnel pathways to Apple/Android (clear CTAs, route purpose, conversion intent)
+
+2) Tighten content/API boundary:
+- keep only marketing/content endpoints in website API surface
+- flag and remove any drift toward app-core domain logic
+- ensure API contract reflects content/funnel scope only
+
+3) Resolve developer-facing surface strategy (required output):
+- inventory what developer-facing API/docs/integration resources exist today
+- identify concrete missing pieces (auth docs, SDK guidance, onboarding flow, environments, examples, support model)
+- evaluate options:
+  a) keep developer docs in website repo
+  b) split into dedicated docs/developer portal
+  c) hybrid: website entry page linking to separate docs portal
+- choose one recommendation with rationale, ownership, and rollout plan
+
+4) Deliver implementation-ready developer surface plan:
+- if docs stay here: define IA, routes, content model, and publication workflow
+- if split: define link strategy from website and migration plan for content
+- include exact MVP scope for external developers (what is and is not supported now)
+
+5) Fix immediate readiness inconsistencies:
+- ensure typecheck/build health for API package
+- resolve dependency/config gaps that break baseline validation
+- add minimal CI checks if currently absent
+
+Constraints / Do not break:
+1) Do not transform website into wallet/identity product backend.
+2) Do not copy core backend logic from Apple/Android into website.
+3) Do not redesign entire brand/UI; focus on role clarity and architecture boundaries.
+4) Keep SEO and current content integrity intact while improving clarity.
+
+Acceptance criteria:
+1) Website role is explicit, consistent, and reflected in docs + API boundaries.
+2) Developer-facing surface assessment is complete and decisioned (with recommended home and ownership).
+3) Concrete backlog exists for chosen developer-docs/API onboarding approach.
+4) Typecheck/build baseline is healthy; minimal CI guardrails exist.
+5) Deliver a concise “Website role & developer-surface decision memo” with actionable next steps.
+
+Prioritized implementation plan:
+1) Role clarification and boundary audit.
+2) API/content scope cleanup and contract alignment.
+3) Developer-surface inventory + option analysis + final recommendation.
+4) Minimal implementation steps for chosen approach (or clear split plan).
+5) Readiness checks and final decision memo.
