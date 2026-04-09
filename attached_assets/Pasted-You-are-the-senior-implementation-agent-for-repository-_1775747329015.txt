@@ -1,0 +1,54 @@
+You are the senior implementation agent for repository: slavasolodkiy/WorldID-website (branch main).
+
+Objective
+Reinforce this repo as marketing/acquisition/funnel only, with clear routing to app and developer/operator surfaces.
+
+Product role of this repo
+Marketing + funnel:
+- attract providers/agents/operators
+- attract end users into Apple/Android apps
+- route developers to WorldID-dev
+It is NOT core wallet/identity backend logic.
+
+Architectural direction
+Strengthen content and conversion architecture while removing any ambiguity that this site is the core app backend.
+
+Inspect first
+- homepage and top-level routing/navigation
+- product/solution pages
+- provider/agent/orb funnel pages
+- developer CTA links/pages
+- any embedded auth/verification/wallet UI logic
+- content/config and analytics event definitions
+- forms/lead-capture flows and error handling
+
+Concrete tasks
+1) Remove or reframe any backend-like claims or pseudo-app behavior.
+2) Clarify navigation into three funnels:
+   - End users -> Apple/Android
+   - Providers/agents/operators -> relevant onboarding/contact path
+   - Developers -> WorldID-dev
+3) Improve CTA coherence and reduce cross-page messaging contradictions.
+4) Ensure loading/error/empty states for lead/contact forms are robust.
+5) Add/clean funnel analytics events for key conversion actions.
+6) Tighten content boundaries so technical docs are linked out, not duplicated here.
+
+Hard constraints (must follow)
+- Do NOT create or modify any CLI file (critical Replit/GitHub export bug).
+- Do NOT create or modify .github/workflows/*.
+- Do NOT introduce core auth/verification/transaction business logic in this repo.
+- Preserve SEO-critical URLs unless redirects are explicitly handled.
+
+Acceptance criteria
+- Website clearly reads as marketing/funnel, not core product backend.
+- Developer and operator paths route to correct repos/surfaces.
+- No contradictory product claims across key pages.
+- Form/funnel UX states are reliable.
+- Final report lists exact content/route/event changes.
+
+Prioritized implementation plan
+1) Audit and remove role confusion.
+2) Implement clear funnel routing and CTAs.
+3) Fix form state handling and analytics.
+4) Clean content consistency across major pages.
+5) Run existing checks and publish evidence-based summary.

@@ -1,6 +1,7 @@
 import { useGetOrbInfo, getGetOrbInfoQueryKey, useListOrbLocations, getListOrbLocationsQueryKey } from "@workspace/api-client-react";
 import orbImg from "@/assets/orb.png";
 import { ApiState } from "@/components/ui/ApiState";
+import { track } from "@/lib/analytics";
 
 export function OrbPage() {
   const { data: orb, isLoading: orbLoading, isError: orbError, refetch: refetchOrb } = useGetOrbInfo({ query: { queryKey: getGetOrbInfoQueryKey() } });
@@ -58,6 +59,7 @@ export function OrbPage() {
         </div>
       </section>
 
+      {/* ── Global Deployment ─────────────────────────────────── */}
       <section className="px-6 py-24">
         <div className="max-w-6xl mx-auto w-full">
           <h2 className="text-3xl font-bold mb-12 text-center">Global Deployment</h2>
@@ -65,7 +67,11 @@ export function OrbPage() {
             {(locs) => (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {locs.map((loc) => (
-                  <div key={loc.id} className="p-6 rounded-2xl border border-border/50 bg-card hover:bg-card/80 transition-colors">
+                  <div
+                    key={loc.id}
+                    className="p-6 rounded-2xl border border-border/50 bg-card hover:bg-card/80 transition-colors"
+                    onClick={() => track({ event: "orb_location_viewed", city: loc.city, country: loc.country })}
+                  >
                     <h3 className="font-bold mb-1">{loc.city}</h3>
                     <p className="text-sm text-muted-foreground">{loc.country}</p>
                     <div className="mt-4 flex items-center gap-2">
@@ -77,6 +83,54 @@ export function OrbPage() {
               </div>
             )}
           </ApiState>
+        </div>
+      </section>
+
+      {/* ── Operator Acquisition CTA ───────────────────────────── */}
+      <section id="become-operator" className="px-6 py-24 bg-card/50 border-t border-border/50 scroll-mt-24">
+        <div className="max-w-3xl mx-auto text-center">
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground block mb-4">
+            For Operators & Agents
+          </span>
+          <h2 className="text-4xl font-bold tracking-tight mb-6">
+            Deploy an Orb in your region
+          </h2>
+          <p className="text-lg text-muted-foreground leading-relaxed mb-10">
+            Orb operators are the backbone of the World Network. As an operator or agent,
+            you run Orb verification sessions in your region, helping onboard real humans
+            to the network. Tools for Humanity provides hardware, support, and operator
+            economics.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="https://world.org/become-an-orb-operator"
+              target="_blank"
+              rel="noreferrer"
+              className="px-6 py-3 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition-colors"
+              onClick={() => track({ event: "cta_become_operator_click", location: "orb_page_cta" })}
+            >
+              Apply to Become an Operator ↗
+            </a>
+            <a
+              href="https://world.org/find-orb"
+              target="_blank"
+              rel="noreferrer"
+              className="px-6 py-3 border border-white/20 rounded-full font-medium hover:bg-white/10 transition-colors"
+              onClick={() => track({ event: "nav_link_click", destination: "find-orb" })}
+            >
+              Find an Orb Near You ↗
+            </a>
+          </div>
+          <p className="text-xs text-muted-foreground mt-8">
+            Interested in operating at scale? Contact the operator program team at{" "}
+            <a
+              href="mailto:operators@toolsforhumanity.com"
+              className="underline underline-offset-4 hover:text-foreground transition-colors"
+              onClick={() => track({ event: "cta_become_operator_click", location: "orb_page_email" })}
+            >
+              operators@toolsforhumanity.com
+            </a>
+          </p>
         </div>
       </section>
     </div>

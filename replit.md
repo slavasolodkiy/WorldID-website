@@ -36,7 +36,17 @@ Replica of world.org and toolsforhumanity.com. Pages:
 
 All data-fetching pages use `<ApiState>` (`src/components/ui/ApiState.tsx`) for loading skeleton / error+retry / empty states.
 
-Pages include a `/developers` handoff page that orients developers and links them to external protocol docs and product repos (hybrid developer surface — see `reports/final-audit.md`).
+Pages include a `/developers` handoff page that orients developers and links them to external protocol docs and product repos.
+
+**Funnel Architecture (all three routes implemented):**
+- End users → App Store / Google Play CTAs on homepage hero, WorldID hero+steps, Navbar "Get App", Footer
+- Operators & Agents → `/orb#become-operator` section with Apply + Find Orb links, Navbar "Operators" (TFH), Home funnel card, TFH hero
+- Developers → `/developers` page, Navbar "Developers" (World), WorldID bottom, TFH software section, Footer
+
+**Analytics (`src/lib/analytics.ts`):**  
+Typed `FunnelEvent` catalog + `track()` utility. Pushes to `window.dataLayer` (GTM) in production; console-logs in development. Events: `cta_app_store_click`, `cta_google_play_click`, `cta_become_operator_click`, `cta_developer_docs_click`, `cta_github_click`, `orb_location_viewed`, `ecosystem_app_click`, `ecosystem_filter_changed`, `newsletter_subscribe_*`, `nav_link_click`.
+
+See `reports/funnel-audit.md` for complete change manifest.
 
 ### `api-server` (Express 5, preview: `/api`)
 Backend API with routes:

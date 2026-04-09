@@ -1,5 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/analytics";
+
+const APP_STORE_URL = "https://apps.apple.com/app/world-app/id1560859277";
 
 export function Navbar() {
   const [location] = useLocation();
@@ -26,24 +29,89 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
           {!isTfh ? (
             <>
-              <Link href="/world-id" className={cn("transition-colors hover:text-foreground", location === "/world-id" && "text-foreground")}>World ID</Link>
-              <Link href="/ecosystem" className={cn("transition-colors hover:text-foreground", location === "/ecosystem" && "text-foreground")}>Ecosystem</Link>
-              <Link href="/tools-for-humanity" className="transition-colors hover:text-foreground">Company</Link>
+              <Link
+                href="/world-id"
+                className={cn("transition-colors hover:text-foreground", location === "/world-id" && "text-foreground")}
+                onClick={() => track({ event: "nav_link_click", destination: "/world-id" })}
+              >
+                World ID
+              </Link>
+              <Link
+                href="/ecosystem"
+                className={cn("transition-colors hover:text-foreground", location === "/ecosystem" && "text-foreground")}
+                onClick={() => track({ event: "nav_link_click", destination: "/ecosystem" })}
+              >
+                Ecosystem
+              </Link>
+              <Link
+                href="/tools-for-humanity"
+                className="transition-colors hover:text-foreground"
+                onClick={() => track({ event: "nav_link_click", destination: "/tools-for-humanity" })}
+              >
+                Company
+              </Link>
+              <Link
+                href="/developers"
+                className={cn("transition-colors hover:text-foreground", location === "/developers" && "text-foreground")}
+                onClick={() => track({ event: "nav_link_click", destination: "/developers" })}
+              >
+                Developers
+              </Link>
             </>
           ) : (
             <>
-              <Link href="/orb" className={cn("transition-colors hover:text-foreground", location === "/orb" && "text-foreground")}>The Orb</Link>
-              <Link href="/team" className={cn("transition-colors hover:text-foreground", location === "/team" && "text-foreground")}>Team</Link>
-              <Link href="/" className="transition-colors hover:text-foreground">World Network</Link>
+              <Link
+                href="/orb"
+                className={cn("transition-colors hover:text-foreground", location === "/orb" && "text-foreground")}
+                onClick={() => track({ event: "nav_link_click", destination: "/orb" })}
+              >
+                The Orb
+              </Link>
+              <Link
+                href="/orb#become-operator"
+                className="transition-colors hover:text-foreground"
+                onClick={() => track({ event: "cta_become_operator_click", location: "navbar" })}
+              >
+                Operators
+              </Link>
+              <Link
+                href="/team"
+                className={cn("transition-colors hover:text-foreground", location === "/team" && "text-foreground")}
+                onClick={() => track({ event: "nav_link_click", destination: "/team" })}
+              >
+                Team
+              </Link>
+              <Link
+                href="/"
+                className="transition-colors hover:text-foreground"
+                onClick={() => track({ event: "nav_link_click", destination: "/" })}
+              >
+                World Network
+              </Link>
             </>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Link href={isTfh ? "/" : "/tools-for-humanity"} className="text-xs font-medium px-3 py-1.5 rounded-full border border-border/50 bg-secondary/50 hover:bg-secondary transition-colors">
+      <div className="flex items-center gap-3">
+        <Link
+          href={isTfh ? "/" : "/tools-for-humanity"}
+          className="text-xs font-medium px-3 py-1.5 rounded-full border border-border/50 bg-secondary/50 hover:bg-secondary transition-colors"
+          onClick={() => track({ event: "nav_link_click", destination: isTfh ? "/" : "/tools-for-humanity" })}
+        >
           {isTfh ? "Go to World" : "Go to TFH"}
         </Link>
+        {!isTfh && (
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs font-medium px-3 py-1.5 rounded-full bg-white text-black hover:bg-gray-200 transition-colors"
+            onClick={() => track({ event: "cta_app_store_click", location: "navbar" })}
+          >
+            Get App
+          </a>
+        )}
       </div>
     </nav>
   );

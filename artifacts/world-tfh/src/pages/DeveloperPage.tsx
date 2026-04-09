@@ -1,4 +1,77 @@
+import { useState } from "react";
 import { Link } from "wouter";
+import { useSubscribeNewsletter } from "@workspace/api-client-react";
+import { useToast } from "@/hooks/use-toast";
+import { track } from "@/lib/analytics";
+
+function DeveloperNewsletter() {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [subscribed, setSubscribed] = useState(false);
+  const subscribe = useSubscribeNewsletter();
+  const { toast } = useToast();
+
+  const validateEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError(null);
+    if (!email) { setEmailError("Please enter your email address."); return; }
+    if (!validateEmail(email)) { setEmailError("Please enter a valid email address."); return; }
+
+    track({ event: "newsletter_subscribe_attempt", location: "developers_page" });
+    subscribe.mutate(
+      { data: { email } },
+      {
+        onSuccess: () => {
+          track({ event: "newsletter_subscribe_success", location: "developers_page" });
+          toast({ title: "You're subscribed!", description: "We'll notify you when new developer resources are available." });
+          setEmail("");
+          setSubscribed(true);
+        },
+        onError: () => {
+          track({ event: "newsletter_subscribe_error", location: "developers_page" });
+          toast({ title: "Subscription failed", description: "Please try again later.", variant: "destructive" });
+        },
+      }
+    );
+  };
+
+  return (
+    <div className="border-t border-border/50 pt-12">
+      <h2 className="text-2xl font-bold mb-3">Stay in the loop</h2>
+      <p className="text-muted-foreground mb-6 max-w-lg">
+        New developer resources, SDK releases, and integration guides. Subscribe for
+        updates — no spam, unsubscribe any time.
+      </p>
+      {subscribed ? (
+        <p className="text-sm text-green-400">Thanks! We'll keep you posted.</p>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-2" noValidate>
+          <div className="flex gap-2 max-w-sm">
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(null); }}
+              aria-label="Email for developer updates"
+              aria-invalid={emailError ? "true" : undefined}
+              className="flex-1 bg-white/5 border border-border/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-white transition-all aria-invalid:border-red-500/60"
+            />
+            <button
+              type="submit"
+              disabled={subscribe.isPending}
+              className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 shrink-0"
+            >
+              {subscribe.isPending ? "Saving…" : "Notify me"}
+            </button>
+          </div>
+          {emailError && <p role="alert" className="text-xs text-red-400">{emailError}</p>}
+        </form>
+      )}
+    </div>
+  );
+}
 
 const PRODUCT_LINKS = [
   {
@@ -77,6 +150,7 @@ export function DeveloperPage() {
                       key={link.text}
                       href={link.href}
                       className="text-sm px-3 py-1.5 rounded-full border border-white/20 hover:bg-white/10 transition-colors"
+                      onClick={() => track({ event: "nav_link_click", destination: link.href })}
                     >
                       {link.text} →
                     </Link>
@@ -87,6 +161,7 @@ export function DeveloperPage() {
                       target="_blank"
                       rel="noreferrer"
                       className="text-sm px-3 py-1.5 rounded-full border border-white/20 hover:bg-white/10 transition-colors"
+                      onClick={() => track({ event: "cta_developer_docs_click", destination: link.href, location: "developers_page" })}
                     >
                       {link.text} ↗
                     </a>
@@ -97,19 +172,7 @@ export function DeveloperPage() {
           ))}
         </div>
 
-        <div className="border-t border-border/50 pt-12">
-          <h2 className="text-2xl font-bold mb-3">Not finding what you need?</h2>
-          <p className="text-muted-foreground mb-6">
-            Sign up for developer updates and we'll let you know when new integration
-            resources are available.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition-colors text-sm"
-          >
-            ← Back to Home
-          </Link>
-        </div>
+        <DeveloperNewsletter />
       </section>
     </div>
   );

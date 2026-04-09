@@ -2,6 +2,7 @@ import { useListEcosystemApps, getListEcosystemAppsQueryKey } from "@workspace/a
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ApiState } from "@/components/ui/ApiState";
+import { track } from "@/lib/analytics";
 
 export function EcosystemPage() {
   const { data: apps, isLoading, isError, refetch } = useListEcosystemApps({ query: { queryKey: getListEcosystemAppsQueryKey() } });
@@ -21,7 +22,10 @@ export function EcosystemPage() {
           {categories.map(cat => (
             <button
               key={cat}
-              onClick={() => setFilter(cat)}
+              onClick={() => {
+                setFilter(cat);
+                track({ event: "ecosystem_filter_changed", category: cat });
+              }}
               className={cn(
                 "px-4 py-2 rounded-full text-sm font-medium transition-colors capitalize",
                 filter === cat ? "bg-white text-black" : "bg-secondary text-muted-foreground hover:text-white hover:bg-secondary/80"
@@ -54,6 +58,7 @@ export function EcosystemPage() {
                     target="_blank"
                     rel="noreferrer"
                     className="group p-6 rounded-2xl bg-card border border-border/50 hover:border-white/20 transition-all hover:-translate-y-1 block"
+                    onClick={() => track({ event: "ecosystem_app_click", app: app.name, category: app.category })}
                   >
                     <div className="flex items-center gap-4 mb-4">
                       <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
